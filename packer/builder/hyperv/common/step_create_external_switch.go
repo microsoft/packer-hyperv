@@ -7,6 +7,7 @@ import (
 	"github.com/mitchellh/packer/packer"
 	"os/exec"
 	"strings"
+	"code.google.com/p/go-uuid/uuid"
 )
 
 // This step creates switch for VM.
@@ -28,13 +29,13 @@ func (s *StepCreateExternalSwitch) Run(state multistep.StateBag) multistep.StepA
 
 	ui.Say("Creating external switch...")
 
-	packerExternalSwitchName := "PackerExtActivationSwitch"
+	packerExternalSwitchName := "paes_" + uuid.New()
 
 	var blockBuffer bytes.Buffer
 	blockBuffer.WriteString("Invoke-Command -scriptblock {")
-	blockBuffer.WriteString("$extSwitchName='"+ packerExternalSwitchName +"';$switch=$null;$names=@('ethernet','wi-fi','foo');$adapters=foreach($name in $names){Get-NetAdapter -physical -Name $name -ErrorAction SilentlyContinue | where status -eq 'up' }foreach($adapter in $adapters){$switch=Get-VMSwitch –SwitchType External | where {$_.NetAdapterInterfaceDescription -eq $adapter.InterfaceDescription};if($switch -eq $null){$switch=New-VMSwitch -Name $extSwitchName -NetAdapterName $adapter.Name -AllowManagementOS $true -Notes 'Parent OS, VMs, WiFi'};if($switch -ne $null){break}};if($switch -ne $null){Get-VMNetworkAdapter –VMName '")
-	blockBuffer.WriteString(vmName)
-	blockBuffer.WriteString("' | Connect-VMNetworkAdapter –SwitchName $switch.Name}else{Write-Error 'No internet adapters found'}")
+	blockBuffer.WriteString("$extSwitchName='"+ packerExternalSwitchName +"';")
+	blockBuffer.WriteString("$vmName='"+ vmName +"';")
+	blockBuffer.WriteString("$switch=$null; $names=@('ethernet','wi-fi','foo'); $adapters=foreach($name in $names){Get-NetAdapter -physical -Name $name -ErrorAction SilentlyContinue | where status -eq 'up' }foreach($adapter in $adapters){$switch=Get-VMSwitch –SwitchType External | where {$_.NetAdapterInterfaceDescription -eq $adapter.InterfaceDescription};if($switch -eq $null){$switch=New-VMSwitch -Name $extSwitchName -NetAdapterName $adapter.Name -AllowManagementOS $true -Notes 'Parent OS, VMs, WiFi'};if($switch -ne $null){break}};if($switch -ne $null){Get-VMNetworkAdapter –VMName $vmName | Connect-VMNetworkAdapter -VMSwitch $switch } else{ Write-Error 'No internet adapters found'}")
 	blockBuffer.WriteString("}")
 
 	err = driver.HypervManage(blockBuffer.String())

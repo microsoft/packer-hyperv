@@ -48,17 +48,6 @@ func (p *Provisioner) Prepare(raws ...interface{}) error {
 		p.config.Inline = nil
 	}
 
-
-//	if(p.config.ScriptPath == "" ){
-//		errs = packer.MultiErrorAppend(errs,
-//			fmt.Errorf("script_path must be specified"))
-//	}
-
-//	if(p.config.DistrSrcPath == "" ){
-//		errs = packer.MultiErrorAppend(errs,
-//			fmt.Errorf("distr_src_path must be specified"))
-//	}
-
 	if(p.config.DistrDstPath == "" ){
 		p.config.DistrDstPath = DistrDstPathDefault
 	}
@@ -96,10 +85,7 @@ func (p *Provisioner) Prepare(raws ...interface{}) error {
 	if len(p.config.ScriptPath) == 0 && p.config.Inline == nil {
 		errs = packer.MultiErrorAppend(errs,
 			fmt.Errorf("Either a script file or inline script must be specified."))
-	} /*else if len(p.config.ScriptPath) > 0 && p.config.Inline != nil {
-		errs = packer.MultiErrorAppend(errs,
-			fmt.Errorf("Only a script file or an inline script can be specified, not both."))
-	}*/
+	}
 
 	if len(p.config.ScriptPath) != 0 {
 		if _, err := os.Stat(p.config.ScriptPath); err != nil {
@@ -181,7 +167,6 @@ func (p *Provisioner) Provision(ui packer.Ui, comm packer.Communicator) error {
 				return err
 			}
 		}
-
 
 	if p.config.Inline != nil {
 		var cmd packer.RemoteCmd

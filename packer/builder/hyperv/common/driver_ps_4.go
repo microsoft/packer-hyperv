@@ -48,6 +48,10 @@ func (d *HypervPS4Driver) Verify() error {
 		return err
 	}
 
+	if err := d.setExecutionPolicy(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -114,7 +118,6 @@ func (d *HypervPS4Driver) verifyElevatedMode() error {
 	blockBuffer.WriteString("if($myWindowsPrincipal.IsInRole($adminRole)){return $true}else{return $false}")
 	blockBuffer.WriteString("}catch{return $false}} foo}")
 
-
 	log.Printf(" blockBuffer: %s", blockBuffer.String())
 	cmd := exec.Command(d.HypervManagePath, blockBuffer.String())
 
@@ -134,10 +137,23 @@ func (d *HypervPS4Driver) verifyElevatedMode() error {
 	return nil
 }
 
+func (d *HypervPS4Driver) setExecutionPolicy() error {
+
+	log.Printf("Enter method: %s", "setExecutionPolicy")
+
+	var blockBuffer bytes.Buffer
+	blockBuffer.WriteString("Invoke-Command -scriptblock {Set-ExecutionPolicy RemoteSigned -Force}")
+
+	err := d.HypervManage(blockBuffer.String())
+
+	return err
+}
+
 func (d *HypervPS4Driver) HypervManage(block string) error {
-	var stdout, stderr bytes.Buffer
 
 	log.Printf("Executing HypervManage: %#v", block)
+
+	var stdout, stderr bytes.Buffer
 
 	script := exec.Command(d.HypervManagePath, block)
 	script.Stdout = &stdout
