@@ -67,10 +67,13 @@ func (p *Provisioner) Prepare(raws ...interface{}) error {
 		}
 	}
 
+	log.Println(fmt.Sprintf("%s: %v","inline", p.config.ScriptPath))
+
+
 	templates := map[string]*string{
 		"script_path":      &p.config.ScriptPath,
-		"distr_src_path": &p.config.DistrSrcPath,
-		"distr_dst_path": &p.config.DistrDstPath,
+		"distr_src_path": 	&p.config.DistrSrcPath,
+		"distr_dst_path": 	&p.config.DistrDstPath,
 	}
 
 	for n, ptr := range templates {
@@ -82,6 +85,8 @@ func (p *Provisioner) Prepare(raws ...interface{}) error {
 		}
 	}
 
+	log.Println(fmt.Sprintf("%s: %v","script_path", p.config.DistrDstPath))
+
 	if len(p.config.ScriptPath) == 0 && p.config.Inline == nil {
 		errs = packer.MultiErrorAppend(errs,
 			fmt.Errorf("Either a script file or inline script must be specified."))
@@ -90,16 +95,18 @@ func (p *Provisioner) Prepare(raws ...interface{}) error {
 	if len(p.config.ScriptPath) != 0 {
 		if _, err := os.Stat(p.config.ScriptPath); err != nil {
 			errs = packer.MultiErrorAppend(errs,
-				fmt.Errorf("Bad script_path '%s': %s", p.config.ScriptPath, err))
+				fmt.Errorf("script_path: '%v' check the path is correct.", p.config.ScriptPath))
 		}
 	}
+	log.Println(fmt.Sprintf("%s: %v","script_path", p.config.ScriptPath))
 
 	if len(p.config.DistrSrcPath) != 0 {
 		if _, err := os.Stat(p.config.DistrSrcPath); err != nil {
 			errs = packer.MultiErrorAppend(errs,
-				fmt.Errorf("Bad distr_src_path '%s': %s", p.config.DistrSrcPath, err))
+				fmt.Errorf("distr_src_path: '%v' check the path is correct.", p.config.DistrSrcPath))
 		}
 	}
+	log.Println(fmt.Sprintf("%s: %v","distr_src_path", p.config.DistrSrcPath))
 
 	if errs != nil && len(errs.Errors) > 0 {
 		return errs

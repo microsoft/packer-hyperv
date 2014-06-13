@@ -93,10 +93,10 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 
 	if(b.config.DiskSizeGB < 10 ){
 		errs = packer.MultiErrorAppend(errs,
-			fmt.Errorf("Windows server requires disk space >= 10 GB, but defined: %v", b.config.DiskSizeGB))
+			fmt.Errorf("disk_size_gb: Windows server requires disk space >= 10 GB, but defined: %v", b.config.DiskSizeGB))
 	} else if b.config.DiskSizeGB > 65536 {
 		errs = packer.MultiErrorAppend(errs,
-			fmt.Errorf("Windows server requires disk space <= 65536 GB, but defined: %v", b.config.DiskSizeGB))
+			fmt.Errorf("disk_size_gb: Windows server requires disk space <= 65536 GB, but defined: %v", b.config.DiskSizeGB))
 	}
 
 	if b.config.RamSizeMB == 0 {
@@ -110,10 +110,10 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 
 	if(b.config.RamSizeMB < ramMinMb ){
 		errs = packer.MultiErrorAppend(errs,
-			fmt.Errorf("Windows server requires memory size >= %v MB, but defined: %v", ramMinMb, b.config.RamSizeMB))
+			fmt.Errorf("ram_size_mb: Windows server requires memory size >= %v MB, but defined: %v", ramMinMb, b.config.RamSizeMB))
 	} else if b.config.RamSizeMB > ramMaxMb {
 		errs = packer.MultiErrorAppend(errs,
-			fmt.Errorf("Windows server requires memory size <= %v MB, but defined: %v", ramMaxMb, b.config.RamSizeMB))
+			fmt.Errorf("ram_size_mb: Windows server requires memory size <= %v MB, but defined: %v", ramMaxMb, b.config.RamSizeMB))
 	}
 
 	warnings = appendWarnings( warnings, fmt.Sprintf("Hyper-V might fail to create a VM if there is no available memory in the system."))
@@ -129,11 +129,14 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 
 	if b.config.SleepTimeMinutes == 0 {
 		b.config.SleepTimeMinutes = 10
+	} else if b.config.SleepTimeMinutes < 0 {
+		errs = packer.MultiErrorAppend(errs,
+			fmt.Errorf("wait_time_minutes: '%v' %s", int64(b.config.SleepTimeMinutes), "the value can't be negative" ))
 	} else if b.config.SleepTimeMinutes > 1440 {
 		errs = packer.MultiErrorAppend(errs,
-			fmt.Errorf("wait_time_minutes: %s", "the value is too big" ))
+			fmt.Errorf("wait_time_minutes: '%v' %s", uint(b.config.SleepTimeMinutes), "the value is too big" ))
 	} else if b.config.SleepTimeMinutes > 120 {
-		warnings = appendWarnings( warnings, fmt.Sprintf("wait_time_minutes: %s", "You may want to decrease the value. Usually 20 min is enough."))
+		warnings = appendWarnings( warnings, fmt.Sprintf("wait_time_minutes: '%v' %s", uint(b.config.SleepTimeMinutes), "You may want to decrease the value. Usually 20 min is enough."))
 	}
 	log.Println(fmt.Sprintf("%s: %v", "SleepTimeMinutes", uint(b.config.SleepTimeMinutes)))
 
@@ -169,14 +172,14 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 	log.Println(fmt.Sprintf("%s: %v","ProductKey", b.config.ProductKey))
 
 
-	log.Println(fmt.Sprintf("%s: %v","RawSingleISOUrl", b.config.RawSingleISOUrl))
 
 	if b.config.RawSingleISOUrl == "" {
-		errs = packer.MultiErrorAppend(errs, errors.New("iso_url must be specified."))
+		errs = packer.MultiErrorAppend(errs, errors.New("iso_url: The option can't be missed and a path must be specified."))
 	}else if _, err := os.Stat(b.config.RawSingleISOUrl); err != nil {
-		errs = packer.MultiErrorAppend(errs, fmt.Errorf("Check iso_url is correct"))
+		errs = packer.MultiErrorAppend(errs, fmt.Errorf("iso_url: Check the path is correct"))
 	}
 
+	log.Println(fmt.Sprintf("%s: %v","RawSingleISOUrl", b.config.RawSingleISOUrl))
 
 	guestOSTypesIsValid := false
 	guestOSTypes := []string{
@@ -195,7 +198,7 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 
 	if !guestOSTypesIsValid {
 		errs = packer.MultiErrorAppend(errs,
-			fmt.Errorf("guest_os_type is invalid. Must be one of: %v", guestOSTypes))
+			fmt.Errorf("guest_os_type: The value is invalid. Must be one of: %v", guestOSTypes))
 	}
 
 	if errs != nil && len(errs.Errors) > 0 {
