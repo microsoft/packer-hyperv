@@ -140,6 +140,21 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 	}
 	log.Println(fmt.Sprintf("%s: %v", "SleepTimeMinutes", uint(b.config.SleepTimeMinutes)))
 
+
+	// Errors
+	templates := map[string]*string{
+		"iso_url":            &b.config.RawSingleISOUrl,
+		"product_key":        &b.config.ProductKey,
+	}
+
+	for n, ptr := range templates {
+		var err error
+		*ptr, err = b.config.tpl.Process(*ptr, nil)
+		if err != nil {
+			errs = packer.MultiErrorAppend(errs, fmt.Errorf("Error processing %s: %s", n, err))
+		}
+	}
+
 	pk := strings.TrimSpace(b.config.ProductKey)
 	if len(pk) != 0 {
 		pattern := "^[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}$"
@@ -152,19 +167,6 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 		}
 
 		warnings = appendWarnings( warnings, fmt.Sprintf("product_key: %s", "value is not empty. Packer will try to activate Windows with the product key. To do this Packer will need an Internet connection."))
-	}
-
-	// Errors
-	templates := map[string]*string{
-		"product_key":            &b.config.ProductKey,
-	}
-
-	for n, ptr := range templates {
-		var err error
-		*ptr, err = b.config.tpl.Process(*ptr, nil)
-		if err != nil {
-			errs = packer.MultiErrorAppend(errs, fmt.Errorf("Error processing %s: %s", n, err))
-		}
 	}
 
 	log.Println(fmt.Sprintf("%s: %v","VMName", b.config.VMName))
