@@ -1,3 +1,7 @@
+// Copyright (c) Microsoft Open Technologies, Inc.
+// All Rights Reserved.
+// Licensed under the Apache License, Version 2.0.
+// See License.txt in the project root for license information.
 package common
 
 import (
@@ -98,13 +102,13 @@ func (s *StepCreateExternalSwitch) Cleanup(state multistep.StateBag) {
 
 	var err error = nil
 
+	errMsg := "Error deleting external switch: %s"
+
 	// connect the vm to the old switch
 	if s.oldSwitchName == "" {
-		ui.Error(fmt.Sprintf("Error deleting external switch: %s", "the old switch name is empty"))
+		ui.Error(fmt.Sprintf(errMsg, "the old switch name is empty"))
 		return
 	}
-
-	errMsg := "Error deleting external switch: %s"
 
 	var blockBuffer bytes.Buffer
 	blockBuffer.WriteString("Invoke-Command -scriptblock {")
@@ -119,6 +123,8 @@ func (s *StepCreateExternalSwitch) Cleanup(state multistep.StateBag) {
 		ui.Error(fmt.Sprintf(errMsg, err))
 		return
 	}
+
+	state.Put("SwitchName", s.oldSwitchName)
 
 	blockBuffer.Reset()
 	blockBuffer.WriteString("Invoke-Command -scriptblock {")

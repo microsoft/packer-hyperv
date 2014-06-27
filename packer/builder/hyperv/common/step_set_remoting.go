@@ -1,3 +1,7 @@
+// Copyright (c) Microsoft Open Technologies, Inc.
+// All Rights Reserved.
+// Licensed under the Apache License, Version 2.0.
+// See License.txt in the project root for license information.
 package common
 
 import (
@@ -8,11 +12,11 @@ import (
 	"github.com/MSOpenTech/packer-hyperv/packer/communicator/powershell"
 )
 
-type StepRemoteSession struct {
+type StepSetRemoting struct {
 	comm packer.Communicator
 }
 
-func (s *StepRemoteSession) Run(state multistep.StateBag) multistep.StepAction {
+func (s *StepSetRemoting) Run(state multistep.StateBag) multistep.StepAction {
 	driver := state.Get("driver").(Driver)
 	ui := state.Get("ui").(packer.Ui)
 
@@ -59,6 +63,6 @@ func (s *StepRemoteSession) Run(state multistep.StateBag) multistep.StepAction {
 	return multistep.ActionContinue
 }
 
-func (s *StepRemoteSession) Cleanup(state multistep.StateBag) {
+func (s *StepSetRemoting) Cleanup(state multistep.StateBag) {
 	// do nothing
 }

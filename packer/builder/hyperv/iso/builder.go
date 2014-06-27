@@ -1,3 +1,7 @@
+// Copyright (c) Microsoft Open Technologies, Inc.
+// All Rights Reserved.
+// Licensed under the Apache License, Version 2.0.
+// See License.txt in the project root for license information.
 package iso
 
 import (
@@ -9,6 +13,7 @@ import (
 
 	"github.com/mitchellh/multistep"
 	hypervcommon "github.com/MSOpenTech/packer-hyperv/packer/builder/hyperv/common"
+//	msbldcommon "github.com/MSOpenTech/packer-hyperv/packer/builder/common"
 	"github.com/mitchellh/packer/common"
 	"github.com/mitchellh/packer/packer"
 	"regexp"
@@ -37,7 +42,6 @@ type iso_config struct {
 	RawSingleISOUrl 	string 				`mapstructure:"iso_url"`
 	SleepTimeMinutes 	time.Duration		`mapstructure:"wait_time_minutes"`
 	ProductKey 			string				`mapstructure:"product_key"`
-	AcceptEULA 			string				`mapstructure:"accept_eula"`
 
 	common.PackerConfig           			`mapstructure:",squash"`
 	hypervcommon.OutputConfig     			`mapstructure:",squash"`
@@ -69,22 +73,6 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 	errs := common.CheckUnusedConfig(md)
 	errs = packer.MultiErrorAppend(errs, b.config.OutputConfig.Prepare(b.config.tpl, &b.config.PackerConfig)...)
 	warnings := make([]string, 0)
-
-	eulaAnswer := strings.TrimSpace(b.config.AcceptEULA)
-	if len(eulaAnswer) == 0 {
-		errs = packer.MultiErrorAppend(errs,
-			fmt.Errorf("accept_eula: The option can't be missed or empty or Packer has to exit."))
-	}else {
-		pattern := "^[Yy][Ee][Ss]$"
-		value := eulaAnswer
-
-		match, _ := regexp.MatchString(pattern, value)
-		if !match {
-			errs = packer.MultiErrorAppend(errs,
-				fmt.Errorf("accept_eula: '%v'. The value should be 'Yes' or Packer has to exit.", eulaAnswer))
-		}
-	}
-	log.Println(fmt.Sprintf("%s: '%v'", "AcceptEULA", b.config.AcceptEULA))
 
 	if b.config.DiskSizeGB == 0 {
 		b.config.DiskSizeGB = 40
@@ -230,6 +218,7 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 //	state.Put("vmName", "PackerFull")
 
 	steps := []multistep.Step{
+//		new(hypervcommon.StepAcceptEula),
 		new(hypervcommon.StepCreateTempDir),
 		&hypervcommon.StepOutputDir{
 			Force: b.config.PackerForce,
@@ -248,9 +237,14 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 		&hypervcommon.StepSleep{ Minutes: b.config.SleepTimeMinutes, ActionName: "Installing" },
 
 		new(hypervcommon.StepConfigureIp),
-		new(hypervcommon.StepRemoteSession),
+		new(hypervcommon.StepSetRemoting),
 		new(common.StepProvision),
 		new(StepInstallProductKey),
+
+//		new(hypervcommon.StepConfigureIp),
+//		new(hypervcommon.StepSetRemoting),
+//		new(hypervcommon.StepCheckRemoting),
+//		new(msbldcommon.StepSysprep),
 	}
 
 	// Run the steps.

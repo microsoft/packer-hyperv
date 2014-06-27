@@ -1,3 +1,7 @@
+// Copyright (c) Microsoft Open Technologies, Inc.
+// All Rights Reserved.
+// Licensed under the Apache License, Version 2.0.
+// See License.txt in the project root for license information.
 package iso
 
 import (
@@ -124,7 +128,8 @@ func (s *StepInstallProductKey) Run(state multistep.StateBag) multistep.StepActi
 				new(hypervcommon.StepDisableVlan),
 				new(hypervcommon.StepRebootVm),
 				new(hypervcommon.StepConfigureIp),
-				new(hypervcommon.StepRemoteSession),
+				new(hypervcommon.StepSetRemoting),
+				new(hypervcommon.StepCheckRemoting),
 				new(hypervcommon.StepExecuteOnlineActivation),
 			}
 
@@ -136,7 +141,8 @@ func (s *StepInstallProductKey) Run(state multistep.StateBag) multistep.StepActi
 				new(hypervcommon.StepDisableVlan),
 				new(hypervcommon.StepRebootVm),
 				new(hypervcommon.StepConfigureIp),
-				new(hypervcommon.StepRemoteSession),
+				new(hypervcommon.StepSetRemoting),
+				new(hypervcommon.StepCheckRemoting),
 				&hypervcommon.StepExecuteOnlineActivationFull{Pk:pk},
 			}
 

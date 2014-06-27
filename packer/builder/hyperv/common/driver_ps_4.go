@@ -1,3 +1,7 @@
+// Copyright (c) Microsoft Open Technologies, Inc.
+// All Rights Reserved.
+// Licensed under the Apache License, Version 2.0.
+// See License.txt in the project root for license information.
 package common
 
 import (
@@ -147,6 +151,27 @@ func (d *HypervPS4Driver) setExecutionPolicy() error {
 	err := d.HypervManage(blockBuffer.String())
 
 	return err
+}
+
+func (d *HypervPS4Driver) VerifyPSAzureModule() error {
+	log.Printf("Enter method: %s", "VerifyPSAzureModule")
+
+	versionCmd := "Invoke-Command -scriptblock { function foo(){try{ $commands = Get-Command -Module Azure;if($commands.Length -eq 0){return $false} }catch{return $false}; return $true} foo}"
+	cmd := exec.Command(d.HypervManagePath, versionCmd)
+
+	cmdOut, err := cmd.Output()
+	if err != nil {
+		return err
+	}
+
+	res := strings.TrimSpace(string(cmdOut))
+
+	if(res== "False"){
+		err := fmt.Errorf("%s", "Azure PowerShell not found. Try this link to install Azure PowerShell: http://go.microsoft.com/?linkid=9811175&clcid=0x409.")
+		return err
+	}
+
+	return nil
 }
 
 func (d *HypervPS4Driver) HypervManage(block string) error {
