@@ -12,7 +12,7 @@ package common
 // extremely specific.
 type Driver interface {
 
-	// VBoxManage executes the given HypervManage command
+	// HypervManage executes the given HypervManage command
 	HypervManage(string) error
 
 

@@ -205,7 +205,7 @@ func (c *comm) uploadFolder(dscPath string, srcPath string ) error {
 		dst string
 	}
 
-	tarWalk := func(path string, info os.FileInfo, prevErr error) error {
+	treeWalk := func(path string, info os.FileInfo, prevErr error) error {
 		// If there was a prior error, return it
 		if prevErr != nil {
 			return prevErr
@@ -230,7 +230,7 @@ func (c *comm) uploadFolder(dscPath string, srcPath string ) error {
 		return nil
 	}
 
-	filepath.Walk(srcPath, tarWalk)
+	filepath.Walk(srcPath, treeWalk)
 
 	var err error
 	for e := l.Front(); e != nil; e = e.Next() {

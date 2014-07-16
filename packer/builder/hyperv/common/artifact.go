@@ -26,6 +26,11 @@ type artifact struct {
 // in the given directory.
 func NewArtifact(dir string) (packer.Artifact, error) {
 	files := make([]string, 0, 5)
+
+	// we need to store output dir path to get rel path to keep dir tree :)
+	// to not modify interface - put it as the first array element
+	files = append(files, dir)
+
 	visit := func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() {
 			files = append(files, path)

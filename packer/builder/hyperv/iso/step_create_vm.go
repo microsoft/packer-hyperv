@@ -28,8 +28,8 @@ func (s *StepCreateVM) Run(state multistep.StateBag) multistep.StepAction {
 	ui.Say("Creating virtual machine...")
 
 	vmName := config.VMName
-	path :=	config.OutputDir
-//	path :=	state.Get("packerTempDir").(string)
+//	path :=	config.OutputDir
+	path :=	state.Get("packerTempDir").(string)
 
 	ram := config.RamSizeMB
 	diskSize := config.DiskSizeGB

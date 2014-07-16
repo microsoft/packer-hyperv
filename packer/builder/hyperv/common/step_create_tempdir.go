@@ -22,7 +22,7 @@ func (s *StepCreateTempDir) Run(state multistep.StateBag) multistep.StepAction {
 	ui.Say("Creating temporary directory...")
 
 	tempDir := os.TempDir()
-	packerTempDir, err := ioutil.TempDir(tempDir, "packer")
+	packerTempDir, err := ioutil.TempDir(tempDir, "packerhv")
 	if err != nil {
 		err := fmt.Errorf("Error creating temporary directory: %s", err)
 		state.Put("error", err)

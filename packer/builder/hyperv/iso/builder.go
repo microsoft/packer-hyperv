@@ -215,10 +215,11 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 	state.Put("ui", ui)
 
 // TODO: remove the next line
-//	state.Put("vmName", "PackerFull")
+//	state.Put("vmName", "FullActiavated")
 
 	steps := []multistep.Step{
 //		new(hypervcommon.StepAcceptEula),
+
 		new(hypervcommon.StepCreateTempDir),
 		&hypervcommon.StepOutputDir{
 			Force: b.config.PackerForce,
@@ -240,6 +241,8 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 		new(hypervcommon.StepSetRemoting),
 		new(common.StepProvision),
 		new(StepInstallProductKey),
+
+		new(StepExportVm),
 
 //		new(hypervcommon.StepConfigureIp),
 //		new(hypervcommon.StepSetRemoting),
