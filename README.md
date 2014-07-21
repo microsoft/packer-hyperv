@@ -3,7 +3,7 @@ packer-hyperv
 
 Packer is an open source tool for creating identical machine images for multiple platforms from a single source configuration. For an introduction to Packer, check out documentation at http://www.packer.io/intro/index.html.
 
-This is a Hyperv plugin for Packer.io to enable windows users to build custom images give an ISO. 
+This is a Hyperv plugin for Packer.io to enable windows users to build custom images given an ISO. 
 
 ISO's can be downloaded off technet or MSDN (if you have a subscription for the latter).
 http://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2012-r2
