@@ -1,0 +1,48 @@
+{
+	"variables": 
+	{
+		"example_dir": "d:/Packer.io/example",
+		"product_key": "",
+		"installers_destination_folder": "c:/PackerDistr"
+	},
+  
+	"builders": 
+	[
+		{
+			"type": "hyperv-iso",
+			"guest_os_type":"WindowsServer2012R2Datacenter",
+			"product_key" : "{{user `product_key`}}",
+			"iso_url":"d:/Hyper-V/ISO/Windows_Server_2012_R2-EN-US-x64.ISO",
+			"disk_size_gb":40,
+			"ram_size_mb":1024,
+			"wait_time_minutes": "10"
+		}
+	],
+
+	"provisioners": 
+	[
+		{
+			"type": "powershell",
+			"distr_src_path": "{{user `example_dir`}}/srcFolder",
+			"distr_dst_dir_path": "{{user `installers_destination_folder`}}",
+			"inline": 
+			[
+				"Write-Host 'Starting inline script...'", 
+				"Write-Host 'Installing notepad...'", 
+				"Start-Process '{{user `installers_destination_folder`}}/npp.6.6.3.Installer.exe' -NoNewWindow -Wait -Argument '/S'",
+				"Write-Host 'Installing Mozilla Firefox...'",
+				"Start-Process '{{user `installers_destination_folder`}}/Firefox Setup 30.0.exe' -NoNewWindow -Wait -Argument '/S'",
+				"Write-Host 'Inline script finished!'" 
+			],
+			"script_path": "{{user `example_dir`}}/probe.ps1"
+		}
+	]
+	
+	,"post-processors": 
+	[
+		{
+			"type": "vagrant",
+			"compression_level": 1
+		}
+	]
+}

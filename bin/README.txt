@@ -1,10 +1,8 @@
 
-Download the archive to your devbox and extract it into your packer folder.
+The files **packer-builder-hyperv-iso.exe** and **packer-provisioner-powershell.exe** in the archive are Packer plug-ins. 
 
-The files builder-hyperv-iso.exe and provisioner-powershell.exe in the archive are Packer plugins. 
+How to install plug-ins you can find here: http://www.packer.io/docs/extend/plugins.html
 
-How to install plugins you can find here: http://www.packer.io/docs/extend/plugins.html
+As the plug-ins names follow new Packer plug-in convention - the simplest way to install the plug-ins just download them into your Packer folder.
 
-File _install.cmd can install the plugins for you.
-
-The file packer-post-processor-vagrant.exe is an extention of the original file with the same name to create a vagrant box from a Hyper-V atrifact. 
+The file **packer-post-processor-vagrant.exe** is an extention of the original file with the same name to create a vagrant box from a Hyper-V atrifact. 
