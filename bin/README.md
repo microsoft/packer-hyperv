@@ -1,5 +1,5 @@
 
-The files **packer-builder-hyperv-iso.exe** and **packer-provisioner-powershell.exe** in the archive are Packer plug-ins. 
+The files **packer-builder-hyperv-iso.exe** and **packer-provisioner-powershell.exe** are Packer plug-ins. 
 
 How to install plug-ins you can find here: http://www.packer.io/docs/extend/plugins.html
 
