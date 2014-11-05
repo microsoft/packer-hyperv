@@ -61,6 +61,10 @@ func (*artifact) Id() string {
 	return "VM"
 }
 
+func (a *artifact) State(name string) interface{} {
+	return "Not implemented"
+}
+
 func (a *artifact) String() string {
 	return fmt.Sprintf("VM files in directory: %s", a.dir)
 }
