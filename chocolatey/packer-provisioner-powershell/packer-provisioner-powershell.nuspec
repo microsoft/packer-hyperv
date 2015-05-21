@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>packer-provisioner-powershell</id>
+    <version>0.7.2</version>
+    <title>packer-provisioner-powershell</title>
+    <authors>Microsoft Open Technologies</authors>
+    <owners>Microsoft Open Technologies</owners>
+    <licenseUrl>https://github.com/MSOpenTech/packer-hyperv/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/MSOpenTech/packer-hyperv</projectUrl>
+    <iconUrl>https://github.com/MSOpenTech/packer-hyperv/raw/master/chocolatey/logo.jpg</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This is a Powershell provisioner plugin for Packer.io to enable the usage of powershell scripts for provisioning.</description>
+    <summary>This is a Powershell provisioner plugin for Packer.io to enable the usage of powershell scripts for provisioning.</summary>
+    <tags>packer vagrant virtual machine provisioner powershell</tags>
+  </metadata>
+</package>
